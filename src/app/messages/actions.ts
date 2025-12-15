@@ -31,24 +31,19 @@ export async function createOrGetDirectMessageChannel(targetUserId: string) {
         }
     }
 
-    // 2. Create new channel
-    const { data: newChannel, error: channelError } = await supabase.from('direct_message_channels')
-        .insert({})
-        .select('id')
-        .single()
+    // 2. Create new channel via RPC (handles participants too to avoid RLS issues)
+    const { data: newChannelId, error: rpcError } = await supabase.rpc('create_dm_channel', {
+        target_user_id: targetUserId
+    })
 
-    if (channelError || !newChannel) throw new Error("Failed to create DM channel")
+    if (rpcError) {
+        console.error("RPC Error:", rpcError)
+        throw new Error("Failed to create DM channel")
+    }
 
-    // 3. Add participants
-    const { error: participantError } = await supabase.from('direct_message_participants')
-        .insert([
-            { dm_channel_id: newChannel.id, user_id: user.id },
-            { dm_channel_id: newChannel.id, user_id: targetUserId }
-        ])
+    if (!newChannelId) throw new Error("Failed to create DM channel")
 
-    if (participantError) throw new Error("Failed to add participants")
-
-    return { id: newChannel.id }
+    return { id: newChannelId }
 }
 
 export async function sendMessage(channelId: string, content: string, attachments: string[] = []) {
