@@ -1,6 +1,7 @@
 import { MetadataRoute } from 'next'
+import { getAllBlogPosts } from '@/lib/blog'
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = 'https://vadea.app'
 
     // Static pages
@@ -16,11 +17,21 @@ export default function sitemap(): MetadataRoute.Sitemap {
         '/ai-advisor',
         '/notifications',
         '/settings',
+        '/blog',
     ].map((route) => ({
         url: `${baseUrl}${route}`,
         lastModified: new Date(),
         changeFrequency: 'daily' as const,
-        priority: route === '' ? 1 : 0.8,
+        priority: route === '' ? 1 : route === '/blog' ? 0.9 : 0.8,
+    }))
+
+    // Blog posts
+    const posts = await getAllBlogPosts()
+    const blogPosts = posts.map((post) => ({
+        url: `${baseUrl}/blog/${post.slug}`,
+        lastModified: new Date(post.publishedAt),
+        changeFrequency: 'weekly' as const,
+        priority: 0.7,
     }))
 
     // Marketing/public pages with higher priority
@@ -36,5 +47,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
         priority: 0.9,
     }))
 
-    return [...routes, ...publicPages]
+    return [...routes, ...blogPosts, ...publicPages]
 }
