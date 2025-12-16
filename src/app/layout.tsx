@@ -85,7 +85,7 @@ export default function RootLayout({
         url: 'https://vadea.app',
         logo: {
           '@type': 'ImageObject',
-          url: 'https://vadea.app/logo.png',
+          url: 'https://vadea.app/logo.svg',
         },
         sameAs: [
           'https://twitter.com/vadea_app',
