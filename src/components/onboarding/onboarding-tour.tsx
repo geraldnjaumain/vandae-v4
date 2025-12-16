@@ -67,26 +67,51 @@ const tourSteps: TourStep[] = [
 export function OnboardingTour() {
     const [isActive, setIsActive] = useState(false)
     const [currentStep, setCurrentStep] = useState(0)
-    const [hasSeenTour, setHasSeenTour] = useState(false)
+    const [hasSeenTour, setHasSeenTour] = useState(true) // Default to true, will check server
+    const [isNewUser, setIsNewUser] = useState(false)
 
     useEffect(() => {
-        // Check if user has seen the tour
-        const tourCompleted = localStorage.getItem("vadea-tour-completed")
-        if (!tourCompleted) {
-            // Show tour after a short delay
-            const timer = setTimeout(() => {
-                setIsActive(true)
-            }, 1000)
-            return () => clearTimeout(timer)
+        async function checkTourStatus() {
+            try {
+                const { createClient } = await import("@/lib/supabase/client")
+                const supabase = createClient()
+
+                const { data: { user } } = await supabase.auth.getUser()
+                if (!user) return
+
+                // Get user profile to check creation date and tour status
+                const { data: profile } = await supabase
+                    .from("profiles")
+                    .select("created_at, has_seen_tour")
+                    .eq("id", user.id)
+                    .single()
+
+                if (!profile) return
+
+                // Check if user is new (created within last 5 minutes) AND hasn't seen tour
+                const isNew = new Date().getTime() - new Date(profile.created_at).getTime() < 5 * 60 * 1000
+                const hasSeen = profile.has_seen_tour || false
+
+                setIsNewUser(isNew)
+                setHasSeenTour(hasSeen)
+
+                // Only show tour if user is new AND hasn't seen it
+                if (isNew && !hasSeen) {
+                    setTimeout(() => {
+                        setIsActive(true)
+                    }, 1500) // Small delay for better UX
+                }
+            } catch (error) {
+                console.error("Error checking tour status:", error)
+            }
         }
-        setHasSeenTour(true)
+
+        checkTourStatus()
     }, [])
 
     const handleNext = () => {
         if (currentStep < tourSteps.length - 1) {
             setCurrentStep(currentStep + 1)
-        } else {
-            handleComplete()
         }
     }
 
@@ -96,19 +121,33 @@ export function OnboardingTour() {
         }
     }
 
-    const handleSkip = () => {
-        localStorage.setItem("vadea-tour-completed", "true")
+    const handleComplete = async () => {
+        try {
+            const { createClient } = await import("@/lib/supabase/client")
+            const supabase = createClient()
+
+            const { data: { user } } = await supabase.auth.getUser()
+            if (user) {
+                // Update profile to mark tour as seen
+                await supabase
+                    .from("profiles")
+                    .update({ has_seen_tour: true })
+                    .eq("id", user.id)
+            }
+        } catch (error) {
+            console.error("Error marking tour as complete:", error)
+        }
+
         setIsActive(false)
         setHasSeenTour(true)
     }
 
-    const handleComplete = () => {
-        localStorage.setItem("vadea-tour-completed", "true")
-        setIsActive(false)
-        setHasSeenTour(true)
+    const handleSkip = async () => {
+        await handleComplete() // Same as complete - mark as seen
     }
 
-    if (!isActive || hasSeenTour) return null
+    // Don't show tour if user has seen it or is not a new user
+    if (!isActive || hasSeenTour || !isNewUser) return null
 
     const step = tourSteps[currentStep]
     const isWelcomeStep = step.target === "welcome"
@@ -132,8 +171,8 @@ export function OnboardingTour() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -20 }}
                     className={`fixed z-[101] ${isWelcomeStep
-                            ? "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-                            : "top-24 left-1/2 -translate-x-1/2"
+                        ? "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                        : "top-24 left-1/2 -translate-x-1/2"
                         }`}
                 >
                     <Card className="w-[400px] shadow-2xl">
