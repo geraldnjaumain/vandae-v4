@@ -8,6 +8,7 @@ import Image from 'next/image'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 
+
 export async function generateStaticParams() {
     const posts = await getAllBlogPosts()
     return posts.map((post) => ({
@@ -15,7 +16,8 @@ export async function generateStaticParams() {
     }))
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+    const params = await props.params
     const post = await getBlogPost(params.slug)
 
     if (!post) {
@@ -47,7 +49,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     }
 }
 
-export default async function BlogPostPage({ params }: { params: { slug: string } }) {
+
+export default async function BlogPostPage(props: { params: Promise<{ slug: string }> }) {
+    const params = await props.params
     const post = await getBlogPost(params.slug)
 
     if (!post) {
@@ -99,16 +103,8 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                         ))}
                     </div>
 
-                    {/* Featured Image */}
-                    <div className="relative w-full h-64 md:h-96 rounded-lg overflow-hidden mb-8">
-                        <Image
-                            src={post.image}
-                            alt={post.title}
-                            fill
-                            className="object-cover"
-                            priority
-                        />
-                    </div>
+                    {/* Featured Image - Gradient Background */}
+                    <div className="relative w-full h-64 md:h-96 rounded-lg overflow-hidden mb-8 bg-gradient-to-br from-primary/20 to-primary/5" />
                 </header>
 
                 {/* Content */}
