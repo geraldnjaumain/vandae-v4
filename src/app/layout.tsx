@@ -55,6 +55,26 @@ export const metadata: Metadata = {
       },
     ],
   },
+  robots: {
+    index: true,
+    follow: true,
+    nocache: false,
+    googleBot: {
+      index: true,
+      follow: true,
+      noimageindex: false,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  alternates: {
+    canonical: 'https://vadea.app',
+  },
+  verification: {
+    google: 'your-google-verification-code', // TODO: Add actual verification code
+  },
+  category: 'education',
   twitter: {
     card: 'summary_large_image',
     title: 'Vadae | The Student OS',
