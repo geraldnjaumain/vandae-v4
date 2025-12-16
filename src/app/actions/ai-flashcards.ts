@@ -2,9 +2,7 @@
 
 import { GoogleGenerativeAI } from "@google/generative-ai"
 import { createClient } from "@/lib/supabase-server"
-import pdf from "pdf-parse"
 import { createCardsBulk } from "./flashcards"
-import * as pdfParse from "pdf-parse"
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "")
 
@@ -114,8 +112,9 @@ export async function generateFlashcardsFromPDF(
         // Convert blob to buffer
         const buffer = Buffer.from(await fileData.arrayBuffer())
 
-        // Parse PDF
-        const pdfData = await pdf(buffer)
+        // Parse PDF using dynamic import
+        const pdfParse = (await import("pdf-parse")).default
+        const pdfData = await pdfParse(buffer)
         const text = pdfData.text
 
         if (!text || text.trim().length === 0) {
