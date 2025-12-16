@@ -2,6 +2,22 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
+    const { pathname } = request.nextUrl
+
+    // Allow SEO routes to bypass authentication
+    if (
+        pathname.startsWith('/sitemap') ||
+        pathname.startsWith('/robots') ||
+        pathname.startsWith('/manifest') ||
+        pathname.startsWith('/_next') ||
+        pathname.startsWith('/api/') ||
+        pathname === '/favicon.ico' ||
+        pathname === '/logo.svg' ||
+        pathname === '/og-image.png'
+    ) {
+        return NextResponse.next()
+    }
+
     let supabaseResponse = NextResponse.next({
         request,
     })
