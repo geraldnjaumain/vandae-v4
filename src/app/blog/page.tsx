@@ -37,9 +37,7 @@ export default async function BlogPage() {
                         <Card className="mb-12 overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
                             <div className="md:flex">
                                 <div className="md:w-1/2 relative h-64 md:h-auto min-h-[300px]">
-                                    <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-                                        <span className="text-6xl">📚</span>
-                                    </div>
+                                    <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/5" />
                                     <Badge className="absolute top-4 left-4">Featured</Badge>
                                 </div>
                                 <CardHeader className="md:w-1/2">
@@ -71,12 +69,7 @@ export default async function BlogPage() {
                     {posts.slice(1).map((post) => (
                         <Link key={post.slug} href={`/blog/${post.slug}`}>
                             <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
-                                <div className="relative h-48 bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center rounded-t-lg">
-                                    <span className="text-5xl">
-                                        {post.category === 'Study Tips' ? '📖' :
-                                            post.category === 'Learning Science' ? '🧠' : '📝'}
-                                    </span>
-                                </div>
+                                <div className="relative h-48 bg-gradient-to-br from-primary/20 to-primary/5 rounded-t-lg" />
                                 <CardHeader>
                                     <Badge variant="secondary" className="w-fit mb-2">
                                         {post.category}
