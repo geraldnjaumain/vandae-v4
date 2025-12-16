@@ -1,4 +1,3 @@
-```typescript
 import { Metadata } from "next"
 import { getUserAnalytics, getActiveGoals, getStudySessions, getGradeEntries } from "@/app/actions/analytics"
 import { AnalyticsDashboard } from "@/components/analytics/analytics-dashboard"
