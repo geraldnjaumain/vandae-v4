@@ -1,7 +1,15 @@
+```typescript
+import { Metadata } from "next"
 import { getUserAnalytics, getActiveGoals, getStudySessions, getGradeEntries } from "@/app/actions/analytics"
 import { AnalyticsDashboard } from "@/components/analytics/analytics-dashboard"
 import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase-server"
+
+export const metadata: Metadata = {
+  title: 'Analytics - Track Your Academic Progress',
+  description: 'Monitor your study time, grades, flashcard retention, and academic goals. Get AI-powered insights to improve your learning.',
+  keywords: ['academic analytics', 'study tracking', 'grade tracker', 'learning analytics', 'student progress'],
+}
 
 export default async function AnalyticsPage() {
     const supabase = await createClient()
