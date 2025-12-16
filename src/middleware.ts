@@ -9,6 +9,7 @@ export async function middleware(request: NextRequest) {
         pathname.startsWith('/sitemap') ||
         pathname.startsWith('/robots') ||
         pathname.startsWith('/manifest') ||
+        pathname.startsWith('/blog') ||
         pathname.startsWith('/_next') ||
         pathname.startsWith('/api/') ||
         pathname === '/favicon.ico' ||
