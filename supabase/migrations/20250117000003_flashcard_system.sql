@@ -215,16 +215,6 @@ CREATE POLICY "Users can delete cards in their decks"
     )
   );
 
--- Review sessions policies
-CREATE POLICY "Users can view their own review sessions"
-  ON public.review_sessions FOR SELECT
-  USING (auth.uid() = user_id);
-
-CREATE POLICY "Users can create their own review sessions"
-  ON public.review_sessions FOR INSERT
-  WITH CHECK (auth.uid() = user_id);
-
-CREATE POLICY "Users can update their own review sessions"
   ON public.review_sessions FOR UPDATE
   USING (auth.uid() = user_id);
 
