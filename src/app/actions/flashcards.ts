@@ -123,8 +123,12 @@ export async function getDeck(deckId: string) {
     .single()
 
   if (error) {
-    console.error("Error fetching deck:", error)
-    return { error: error.message }
+    console.error("Error fetching deck:", error.message, error.details, error.hint)
+    return { error: error.message || "Failed to fetch deck" }
+  }
+
+  if (!deck) {
+    return { error: "Deck not found" }
   }
 
   return { data: deck }
@@ -252,8 +256,17 @@ export async function getDeckStats(deckId: string) {
     .single()
 
   if (error) {
-    console.error("Error fetching deck stats:", error)
-    return { error: error.message }
+    console.error("Error fetching deck stats:", error.message, error.details)
+    return {
+      error: error.message || "Failed to fetch deck statistics",
+      data: {
+        totalCards: 0,
+        newCards: 0,
+        dueCards: 0,
+        reviewingCards: 0,
+        retentionRate: 0,
+      }
+    }
   }
 
   return { data: stats }
