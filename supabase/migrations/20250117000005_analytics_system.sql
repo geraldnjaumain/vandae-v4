@@ -141,7 +141,6 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_user_analytics_user_id ON public.user_anal
 CREATE INDEX IF NOT EXISTS idx_study_sessions_user_id ON public.study_sessions(user_id);
 CREATE INDEX IF NOT EXISTS idx_study_sessions_started_at ON public.study_sessions(started_at DESC);
 CREATE INDEX IF NOT EXISTS idx_study_sessions_activity_type ON public.study_sessions(activity_type);
-CREATE INDEX IF NOT EXISTS idx_study_sessions_user_date ON public.study_sessions(user_id, DATE(started_at));
 
 -- Grade entries
 CREATE INDEX IF NOT EXISTS idx_grade_entries_user_id ON public.grade_entries(user_id);
