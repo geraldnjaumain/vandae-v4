@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
             },
             { courseId, courseName: course.course_name, courseCode: course.course_code },
             async () => {
-                const model = genAI.getGenerativeModel({ model: 'models/gemini-2.5-flash' })
+                const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
 
                 const analysisPrompt = `You are an expert academic advisor analyzing a course for a university student.
 
