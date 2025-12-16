@@ -616,13 +616,14 @@ export async function submitCardReview(
 
   // Update session stats
   const { error: sessionError } = await supabase
-    .from("review_sessions")
-    .update({
-      cards_reviewed: supabase.sql`cards_reviewed + 1`,
-      cards_correct: rating >= 3 ? supabase.sql`cards_correct + 1` : undefined,
-      cards_failed: rating === 1 ? supabase.sql`cards_failed + 1` : undefined,
+    .rpc("increment_review_stats", {
+      p_session_id: sessionId,
+      p_rating: rating,
     })
-    .eq("id", sessionId)
+
+  if (sessionError) {
+    console.error("Error updating session:", sessionError)
+  }
 
   if (sessionError) {
     console.error("Error updating session:", sessionError)

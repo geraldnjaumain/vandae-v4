@@ -163,8 +163,8 @@ function EventCard({ event, isMobile = false }: { event: TimetableEvent, isMobil
         try {
             await deleteTimetableEvent(event.id)
             toast.success("Class removed")
-        } catch (e) {
-            toast.error("Failed to delete")
+        } catch (error) {
+            console.log("Clipboard API not available", error)
         }
     }
 

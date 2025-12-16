@@ -40,8 +40,8 @@ export function ResourceViewer({ resource, isOpen, onClose }: ResourceViewerProp
                             const res = await fetch(data.signedUrl)
                             const text = await res.text()
                             setTextContent(text)
-                        } catch (e) {
-                            console.error("Failed to fetch text content", e)
+                        } catch (error) {
+                            console.error("Error reading file", error)
                         }
                     }
                 }

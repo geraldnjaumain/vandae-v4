@@ -112,9 +112,9 @@ export async function generateFlashcardsFromPDF(
         // Convert blob to buffer
         const buffer = Buffer.from(await fileData.arrayBuffer())
 
-        // Parse PDF using dynamic import
-        const pdfParse = (await import("pdf-parse")).default
-        const pdfData = await pdfParse(buffer)
+        // Parse PDF - pdf-parse is a CommonJS module, use dynamic import
+        const pdfParse = await import("pdf-parse")
+        const pdfData = await (pdfParse as any)(buffer)
         const text = pdfData.text
 
         if (!text || text.trim().length === 0) {

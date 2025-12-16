@@ -74,8 +74,8 @@ export function TopNav() {
                 setUnreadCount(count)
                 const notifCount = await getUnreadNotificationCount()
                 setUnreadNotifCount(notifCount)
-            } catch (e) {
-                console.error("Failed to fetch unread counts", e)
+            } catch (error) {
+                console.error("Failed to fetch unread counts", error)
             }
         }
 

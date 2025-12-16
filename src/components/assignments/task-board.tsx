@@ -62,8 +62,8 @@ function TaskCard({ task }: { task: Task }) {
         try {
             await updateTaskStatus(task.id, newStatus)
             toast.success("Task updated")
-        } catch (e) {
-            toast.error("Failed to update task")
+        } catch (error) {
+            console.error("Error updating task status", error)
         }
     }
 
