@@ -46,8 +46,6 @@ export async function middleware(request: NextRequest) {
     // Refresh session if expired
     const { data: { user } } = await supabase.auth.getUser()
 
-    const { pathname } = request.nextUrl
-
     // Public routes that don't require authentication
     // Public routes that don't require authentication
     const publicRoutes = ['/login', '/signup', '/']
