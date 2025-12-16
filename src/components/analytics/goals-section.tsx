@@ -1,10 +1,13 @@
+```
 "use client"
 
 import * as React from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
-import { Plus, Target, TrendingUp } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Plus, TrendingUp, Target, Calendar } from "lucide-react"
+import { cn } from "@/lib/utils"
 import type { UserGoal } from "@/app/actions/analytics"
 import { CreateGoalDialog } from "./create-goal-dialog"
 
