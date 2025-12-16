@@ -73,7 +73,7 @@ export function OnboardingTour() {
     useEffect(() => {
         async function checkTourStatus() {
             try {
-                const { createClient } = await import("@/lib/supabase/client")
+                const { createClient } = await import("@/lib/supabase-browser")
                 const supabase = createClient()
 
                 const { data: { user } } = await supabase.auth.getUser()
@@ -123,7 +123,7 @@ export function OnboardingTour() {
 
     const handleComplete = async () => {
         try {
-            const { createClient } = await import("@/lib/supabase/client")
+            const { createClient } = await import("@/lib/supabase-browser")
             const supabase = createClient()
 
             const { data: { user } } = await supabase.auth.getUser()
