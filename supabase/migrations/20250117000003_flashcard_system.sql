@@ -161,6 +161,12 @@ ALTER TABLE public.flashcards ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.review_sessions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.card_review_history ENABLE ROW LEVEL SECURITY;
 
+-- Drop existing policies if they exist
+DROP POLICY IF EXISTS "Users can view their own decks" ON public.flashcard_decks;
+DROP POLICY IF EXISTS "Users can create their own decks" ON public.flashcard_decks;
+DROP POLICY IF EXISTS "Users can update their own decks" ON public.flashcard_decks;
+DROP POLICY IF EXISTS "Users can delete their own decks" ON public.flashcard_decks;
+
 -- Flashcard decks policies
 CREATE POLICY "Users can view their own decks"
   ON public.flashcard_decks FOR SELECT
@@ -177,6 +183,12 @@ CREATE POLICY "Users can update their own decks"
 CREATE POLICY "Users can delete their own decks"
   ON public.flashcard_decks FOR DELETE
   USING (auth.uid() = user_id);
+
+-- Drop existing flashcard policies
+DROP POLICY IF EXISTS "Users can view cards in their decks" ON public.flashcards;
+DROP POLICY IF EXISTS "Users can create cards in their decks" ON public.flashcards;
+DROP POLICY IF EXISTS "Users can update cards in their decks" ON public.flashcards;
+DROP POLICY IF EXISTS "Users can delete cards in their decks" ON public.flashcards;
 
 -- Flashcards policies (access via deck ownership)
 CREATE POLICY "Users can view cards in their decks"
@@ -215,6 +227,12 @@ CREATE POLICY "Users can delete cards in their decks"
     )
   );
 
+-- Drop existing review session policies
+DROP POLICY IF EXISTS "Users can view their own review sessions" ON public.review_sessions;
+DROP POLICY IF EXISTS "Users can create their own review sessions" ON public.review_sessions;
+DROP POLICY IF EXISTS "Users can update their own review sessions" ON public.review_sessions;
+DROP POLICY IF EXISTS "Users can delete their own review sessions" ON public.review_sessions;
+
 -- Review sessions policies
 CREATE POLICY "Users can view their own review sessions"
   ON public.review_sessions FOR SELECT
@@ -231,6 +249,10 @@ CREATE POLICY "Users can update their own review sessions"
 CREATE POLICY "Users can delete their own review sessions"
   ON public.review_sessions FOR DELETE
   USING (auth.uid() = user_id);
+
+-- Drop existing card review history policies
+DROP POLICY IF EXISTS "Users can view their own review history" ON public.card_review_history;
+DROP POLICY IF EXISTS "Users can create their own review history" ON public.card_review_history;
 
 -- Card review history policies
 CREATE POLICY "Users can view their own review history"
