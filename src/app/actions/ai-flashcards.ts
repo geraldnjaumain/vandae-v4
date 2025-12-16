@@ -2,6 +2,7 @@
 
 import { GoogleGenerativeAI } from "@google/generative-ai"
 import { createClient } from "@/lib/supabase-server"
+import pdf from "pdf-parse"
 import { createCardsBulk } from "./flashcards"
 import * as pdfParse from "pdf-parse"
 
