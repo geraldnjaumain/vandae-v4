@@ -265,6 +265,10 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- TRIGGERS
 -- =====================================================
 
+-- Drop existing triggers if they exist
+DROP TRIGGER IF EXISTS update_user_goals_updated_at ON public.user_goals;
+DROP TRIGGER IF EXISTS on_goal_update_check_completion ON public.user_goals;
+
 -- Update updated_at timestamp for user_goals
 CREATE TRIGGER update_user_goals_updated_at
   BEFORE UPDATE ON public.user_goals
