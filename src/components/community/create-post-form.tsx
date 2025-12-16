@@ -7,8 +7,9 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { createPost } from "@/app/actions/community"
 import { toast } from "sonner"
-import { Send, Paperclip, X, Loader2 } from "lucide-react"
+import { Send, Loader2 } from "lucide-react"
 import { createClient } from "@/lib/supabase-browser"
+import { FileUploadWithCompression } from "./file-upload-with-compression"
 
 interface CreatePostFormProps {
     userCommunities: Array<{
@@ -22,17 +23,6 @@ export function CreatePostForm({ userCommunities }: CreatePostFormProps) {
     const [selectedCommunity, setSelectedCommunity] = React.useState<string>("")
     const [isSubmitting, setIsSubmitting] = React.useState(false)
     const [files, setFiles] = React.useState<File[]>([])
-    const fileInputRef = React.useRef<HTMLInputElement>(null)
-
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files.length > 0) {
-            setFiles(prev => [...prev, ...Array.from(e.target.files!)])
-        }
-    }
-
-    const removeFile = (index: number) => {
-        setFiles(prev => prev.filter((_, i) => i !== index))
-    }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -164,49 +154,17 @@ export function CreatePostForm({ userCommunities }: CreatePostFormProps) {
                         disabled={isSubmitting}
                     />
 
-                    {/* File Previews */}
-                    {files.length > 0 && (
-                        <div className="flex flex-wrap gap-2">
-                            {files.map((file, i) => (
-                                <div key={i} className="flex items-center gap-1 bg-slate-100 px-2 py-1 rounded-md text-xs border border-slate-200">
-                                    <span className="truncate max-w-[150px]">{file.name}</span>
-                                    <button
-                                        type="button"
-                                        onClick={() => removeFile(i)}
-                                        className="text-slate-500 hover:text-red-500"
-                                    >
-                                        <X className="h-3 w-3" />
-                                    </button>
-                                </div>
-                            ))}
-                        </div>
-                    )}
+                    {/* File Upload with Compression */}
+                    <FileUploadWithCompression
+                        onFilesSelected={(compressedFiles) => setFiles(compressedFiles)}
+                        maxFiles={5}
+                    />
 
                     {/* Actions */}
                     <div className="flex items-center justify-between pt-2 border-t border-slate-100">
-                        <div className="flex items-center gap-2">
-                            <input
-                                type="file"
-                                multiple
-                                className="hidden"
-                                ref={fileInputRef}
-                                onChange={handleFileChange}
-                            />
-                            <Button
-                                type="button"
-                                variant="ghost"
-                                size="sm"
-                                className="text-slate-500 hover:text-slate-900 gap-2 h-8"
-                                onClick={() => fileInputRef.current?.click()}
-                                disabled={isSubmitting}
-                            >
-                                <Paperclip className="h-4 w-4" />
-                                <span className="text-xs">Attach Files</span>
-                            </Button>
-                            <span className="text-xs text-gray-400">
-                                {content.length} chars
-                            </span>
-                        </div>
+                        <span className="text-xs text-gray-400">
+                            {content.length} chars
+                        </span>
 
                         <Button type="submit" disabled={isSubmitting || (!content.trim() && files.length === 0) || !selectedCommunity}>
                             {isSubmitting ? (

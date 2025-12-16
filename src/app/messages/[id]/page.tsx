@@ -1,12 +1,10 @@
-import { AppLayout } from "@/components/layout"
 import { createClient, getUser } from "@/lib/supabase-server"
 import { redirect } from "next/navigation"
-import { ChatInterface } from "@/components/community/chat-interface"
-import { Card } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, Phone, Video } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { DMChatInterface } from "@/components/messages/dm-chat-interface"
 
 export default async function DMChannelPage(props: { params: Promise<{ id: string }> }) {
     const params = await props.params;
@@ -42,26 +40,28 @@ export default async function DMChannelPage(props: { params: Promise<{ id: strin
     const otherMember = Array.isArray(otherMemberData) ? otherMemberData[0] : otherMemberData
 
     return (
-        <AppLayout>
-            <div className="h-[calc(100vh-64px)] flex flex-col bg-muted/30">
-                {/* Header */}
-                <div className="h-16 border-b border-border bg-background px-6 flex items-center gap-4 shrink-0 shadow-sm z-10">
-                    <Link href="/messages">
-                        <Button variant="ghost" size="icon" className="text-muted-foreground">
+        <div className="flex flex-col h-full bg-slate-50/50 dark:bg-zinc-950/50">
+            {/* Header */}
+            <div className="h-16 border-b border-border bg-background px-4 md:px-6 flex items-center justify-between shrink-0 shadow-sm z-10">
+                <div className="flex items-center gap-3">
+                    <Link href="/messages" className="md:hidden">
+                        <Button variant="ghost" size="icon" className="-ml-2 text-muted-foreground">
                             <ArrowLeft className="h-5 w-5" />
                         </Button>
                     </Link>
 
                     {otherMember ? (
                         <div className="flex items-center gap-3">
-                            <Avatar className="h-8 w-8">
-                                <AvatarImage src={otherMember.avatar_url || undefined} />
-                                <AvatarFallback>{otherMember.full_name?.[0]}</AvatarFallback>
-                            </Avatar>
+                            <div className="relative">
+                                <Avatar className="h-9 w-9 border border-border">
+                                    <AvatarImage src={otherMember.avatar_url || undefined} />
+                                    <AvatarFallback>{otherMember.full_name?.[0]}</AvatarFallback>
+                                </Avatar>
+                                <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-green-500 ring-2 ring-background"></span>
+                            </div>
                             <div>
-                                <h2 className="font-bold text-foreground leading-none">{otherMember.full_name}</h2>
-                                <span className="text-xs text-green-500 font-medium flex items-center gap-1">
-                                    <span className="h-1.5 w-1.5 rounded-full bg-green-500 inline-block"></span>
+                                <h2 className="font-semibold text-foreground text-sm leading-none mb-1">{otherMember.full_name}</h2>
+                                <span className="text-xs text-muted-foreground font-medium flex items-center gap-1.5">
                                     Online
                                 </span>
                             </div>
@@ -71,32 +71,24 @@ export default async function DMChannelPage(props: { params: Promise<{ id: strin
                     )}
                 </div>
 
-                {/* Chat Interface - Reusing existing component but we need to adapt it slightly 
-                    The existing ChatInterface takes 'communityId' and 'channelId'. 
-                    For DMs, we don't have a communityId.
-                    
-                    OPTION: We can update ChatInterface to accept an optional 'isDM' flag 
-                    and handle the message fetching/subscription logic differently if it is a DM. 
-                    Given I cannot deeply refactor ChatInterface right now without risk, 
-                    I will create a WRAPPER or specialized DM verison if needed. 
-                    
-                    However, looking at ChatInterface source (I remember viewing it), 
-                    it likely queries 'messages' table. DMs are in 'direct_messages'.
-                    
-                    So I absolutely need a `DMChatInterface` or huge refactor.
-                    Refactoring usually cleaner. 
-                    Let's create `src/components/messages/dm-chat-interface.tsx`.
-                */}
-                <div className="flex-1 overflow-hidden">
-                    <DMChatInterface
-                        channelId={id}
-                        currentUserId={user.id}
-                        otherUserId={otherMember?.id}
-                    />
+                <div className="flex items-center gap-1">
+                    <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
+                        <Phone className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
+                        <Video className="h-4 w-4" />
+                    </Button>
                 </div>
             </div>
-        </AppLayout>
+
+            {/* Chat Interface */}
+            <div className="flex-1 overflow-hidden">
+                <DMChatInterface
+                    channelId={id}
+                    currentUserId={user.id}
+                    otherUserId={otherMember?.id}
+                />
+            </div>
+        </div>
     )
 }
-
-import { DMChatInterface } from "@/components/messages/dm-chat-interface"

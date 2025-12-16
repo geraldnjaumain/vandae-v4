@@ -4,30 +4,29 @@ import { Bell } from "lucide-react"
 import { getNotifications, markAllAsRead } from "./actions"
 import { NotificationList } from "@/components/notifications/notification-list"
 import { getUser } from "@/lib/supabase-server"
+import { getNotifications as getNotificationsAction } from "@/app/actions/notifications" // Renamed to avoid conflict
+import { NotificationsList } from "@/components/notifications/notifications-list"
 import { redirect } from "next/navigation"
 
 export default async function NotificationsPage() {
     const user = await getUser()
     if (!user) redirect('/login')
 
-    const notifications = await getNotifications()
+    const { data: notifications } = await getNotificationsAction() // Using the renamed action
 
     return (
         <AppLayout>
-            <div className="container mx-auto p-4 md:p-6 max-w-3xl">
-                <div className="flex items-center justify-between mb-8">
-                    <div className="space-y-1">
-                        <Typography variant="h1" className="flex items-center gap-2">
-                            <Bell className="h-8 w-8 text-indigo-600 dark:text-indigo-400" />
-                            Notifications
-                        </Typography>
-                        <Typography variant="muted">
-                            Recent alerts and updates.
-                        </Typography>
+            <div className="min-h-screen bg-background py-8">
+                <div className="container mx-auto px-4 max-w-4xl">
+                    <div className="mb-8">
+                        <h1 className="text-4xl font-bold text-foreground">Notifications</h1>
+                        <p className="text-muted-foreground mt-2">
+                            Stay updated with your assignments, flashcards, and community activity
+                        </p>
                     </div>
-                </div>
 
-                <NotificationList initialNotifications={notifications} />
+                    <NotificationsList initialNotifications={notifications || []} />
+                </div>
             </div>
         </AppLayout>
     )

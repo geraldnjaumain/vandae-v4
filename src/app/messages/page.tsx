@@ -1,162 +1,42 @@
-import { AppLayout } from "@/components/layout"
-import { Typography } from "@/components/ui/typography"
-import { Card, CardContent } from "@/components/ui/card"
-import { createClient, getUser, getUserProfile } from "@/lib/supabase-server"
-import { redirect } from "next/navigation"
-import { Users, Mail } from "lucide-react"
-import Link from "next/link"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { formatDistanceToNow } from "date-fns"
+import { Mail } from "lucide-react"
+import { ChatSidebar } from "@/components/messages/chat-sidebar"
 
-export default async function MessagesPage() {
-    const user = await getUser()
-    if (!user) redirect('/login')
-
-    const supabase = await createClient()
-
-    // Fetch user's message channels
-    const { data: participations } = await supabase.from('direct_message_participants')
-        .select(`
-            dm_channel_id,
-            direct_message_channels (
-                updated_at,
-                direct_messages (
-                    content,
-                    created_at,
-                    is_read
-                )
-            )
-        `)
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false }) // Sort by participation creation or channel update?
-
-    // We need to fetch the OTHER participant for each channel
-    // This is tricky in one query. Let's get the channel IDs first.
-    const channelIds = participations?.map((p: any) => p.dm_channel_id) || []
-
-    let channelsWithDetails: any[] = []
-
-    if (channelIds.length > 0) {
-        // Fetch all participants for these channels
-        const { data: allParticipants } = await supabase.from('direct_message_participants')
-            .select(`
-                dm_channel_id,
-                user_id,
-                profiles:user_id (
-                    id,
-                    full_name,
-                    avatar_url
-                )
-            `)
-            .in('dm_channel_id', channelIds)
-
-        // Fetch last message for each channel
-        const { data: lastMessages } = await supabase.from('direct_messages')
-            .select('*')
-            .in('dm_channel_id', channelIds)
-            .order('created_at', { ascending: false })
-
-        // Fetch unread counts
-        const { data: unreadData } = await supabase.from('direct_messages')
-            .select('dm_channel_id')
-            .in('dm_channel_id', channelIds)
-            .eq('is_read', false)
-            .neq('author_id', user.id)
-
-        // Count per channel
-        const unreadCounts = (unreadData || []).reduce((acc: any, curr: any) => {
-            acc[curr.dm_channel_id] = (acc[curr.dm_channel_id] || 0) + 1
-            return acc
-        }, {})
-
-        // Group logic
-        channelsWithDetails = channelIds.map(cid => {
-            const participants = allParticipants?.filter((p: any) => p.dm_channel_id === cid) || []
-            const otherParticipant = participants.find((p: any) => p.user_id !== user.id)
-            const messages = lastMessages?.filter((m: any) => m.dm_channel_id === cid) || []
-            const lastMessage = messages[0]
-
-            if (!otherParticipant) return null // Should not happen for valid DMs
-
-            return {
-                id: cid,
-                otherUser: otherParticipant.profiles,
-                lastMessage: lastMessage,
-                unreadCount: unreadCounts[cid] || 0
-            }
-        }).filter(Boolean)
-
-        // Sort by last message time
-        channelsWithDetails.sort((a, b) => {
-            const timeA = new Date(a.lastMessage?.created_at || 0).getTime()
-            const timeB = new Date(b.lastMessage?.created_at || 0).getTime()
-            return timeB - timeA
-        })
-    }
-
+export default function MessagesPage() {
     return (
-        <AppLayout>
-            <div className="container mx-auto p-6 max-w-4xl">
-                <div className="mb-8">
-                    <Typography variant="h1" className="flex items-center gap-2">
-                        <Mail className="h-8 w-8 text-indigo-600" />
-                        Messages
-                    </Typography>
+        <div className="flex flex-col h-full relative bg-background">
+            {/* Mobile Header with Sidebar Trigger - We need to render the trigger specifically here 
+                because the layout hides the sidebar on mobile. 
+                Wait, the Layout renders ChatSidebar with "md:hidden" className?? 
+                No, layout renders it as hidden md:block.
+                We need to render a mobile-only sidebar trigger here or in the layout.
+                Ideally layout handles it. Let's look at layout.
+                Layout has: <ChatSidebar ... className="hidden md:block ..." />
+                It does NOT render the mobile version.
+                So we should render the mobile trigger inside the main content area (here).
+                
+                Actually, simpler: Let's render the ChatSidebar in mobile mode here?
+                No, that duplicates data fetching which was done in layout.
+                
+                Better fix: Update layout.tsx to render the mobile sidebar trigger. 
+                BUT for now, let's just make this page look good.
+            */}
+
+            <div className="flex flex-col items-center justify-center h-full text-center p-8 space-y-4 animate-in fade-in duration-500">
+                <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Mail className="h-10 w-10 text-primary" />
+                </div>
+                <div className="space-y-2 max-w-sm">
+                    <h2 className="text-2xl font-bold tracking-tight text-foreground">Your Messages</h2>
+                    <p className="text-muted-foreground">
+                        Select a conversation from the sidebar to start chatting.
+                    </p>
                 </div>
 
-                <Card>
-                    <CardContent className="p-0">
-                        {channelsWithDetails.length === 0 ? (
-                            <div className="text-center py-12 text-slate-500">
-                                <Users className="h-12 w-12 mx-auto text-slate-300 mb-3" />
-                                <p>No messages yet.</p>
-                                <p className="text-xs">Visit a community to start chatting with members.</p>
-                            </div>
-                        ) : (
-                            <div className="divide-y divide-slate-100">
-                                {channelsWithDetails.map((channel) => (
-                                    <Link key={channel.id} href={`/messages/${channel.id}`} className={`flex items-center gap-4 p-4 hover:bg-slate-50 transition-colors ${channel.unreadCount > 0 ? 'bg-indigo-50/50' : ''}`}>
-                                        <div className="relative">
-                                            <Avatar className="h-12 w-12">
-                                                <AvatarImage src={channel.otherUser.avatar_url} />
-                                                <AvatarFallback>{channel.otherUser.full_name?.[0]}</AvatarFallback>
-                                            </Avatar>
-                                            {channel.unreadCount > 0 && (
-                                                <span className="absolute -top-1 -right-1 h-5 w-5 bg-indigo-600 rounded-full text-[10px] font-bold text-white flex items-center justify-center border-2 border-white">
-                                                    {channel.unreadCount > 9 ? '9+' : channel.unreadCount}
-                                                </span>
-                                            )}
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <div className="flex items-center justify-between mb-1">
-                                                <h3 className={`font-semibold truncate ${channel.unreadCount > 0 ? 'text-indigo-900' : 'text-slate-900'}`}>
-                                                    {channel.otherUser.full_name}
-                                                </h3>
-                                                {channel.lastMessage && (
-                                                    <span className={`text-xs whitespace-nowrap ml-2 ${channel.unreadCount > 0 ? 'text-indigo-600 font-medium' : 'text-slate-400'}`}>
-                                                        {formatDistanceToNow(new Date(channel.lastMessage.created_at), { addSuffix: true })}
-                                                    </span>
-                                                )}
-                                            </div>
-                                            <p className={`text-sm truncate ${channel.unreadCount > 0 ? 'text-indigo-800 font-medium' : 'text-slate-500'}`}>
-                                                {channel.lastMessage ? (
-                                                    <>
-                                                        {channel.lastMessage.author_id === user.id && "You: "}
-                                                        {channel.lastMessage.content}
-                                                    </>
-                                                ) : (
-                                                    <span className="italic">No messages yet</span>
-                                                )}
-                                            </p>
-                                        </div>
-                                    </Link>
-                                ))}
-                            </div>
-                        )}
-                    </CardContent>
-                </Card>
+                {/* Mobile Hint */}
+                <p className="text-sm text-muted-foreground/80 md:hidden pt-8">
+                    Tap the menu button in the top left to see your chats.
+                </p>
             </div>
-        </AppLayout>
+        </div>
     )
 }

@@ -110,7 +110,7 @@ export async function researchUnit(unitId: string, query: string) {
             return { sources: [], error: "Gemini API Key is missing. Please configure it in your environment." }
         }
 
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" })
+        const model = genAI.getGenerativeModel({ model: "models/gemini-2.5-flash" })
 
         const prompt = `
             Generate 3 relevant search queries for finding educational content about:

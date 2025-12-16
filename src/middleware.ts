@@ -47,13 +47,14 @@ export async function middleware(request: NextRequest) {
     // If user is authenticated
     if (user) {
         // Check if user has completed onboarding
-        const { data: profile } = await supabase
+        const { data: profile, error: profileError } = await supabase
             .from('profiles')
             .select('major, university, interests')
             .eq('id', user.id)
-            .single()
+            .maybeSingle()
 
-        const hasCompletedOnboarding = profile?.major && profile?.university && profile?.interests && profile.interests.length > 0
+        // If profile doesn't exist or has error, treat as incomplete onboarding
+        const hasCompletedOnboarding = !profileError && profile?.major && profile?.university && profile?.interests && profile.interests.length > 0
 
         // Redirect to onboarding if not completed and not already there
         if (!hasCompletedOnboarding && pathname !== '/onboarding') {

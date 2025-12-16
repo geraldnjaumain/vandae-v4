@@ -1,6 +1,7 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
-import { NavSidebar } from "./nav-sidebar"
+import { TopNav } from "./top-nav"
+import { OnboardingTour } from "@/components/onboarding/onboarding-tour"
 
 interface AppLayoutProps {
     children: React.ReactNode
@@ -9,9 +10,10 @@ interface AppLayoutProps {
 
 export function AppLayout({ children, className }: AppLayoutProps) {
     return (
-        <div className="flex h-screen bg-notion-bg">
-            <NavSidebar />
-            <main className={cn("flex-1 overflow-y-auto", className)}>
+        <div className="min-h-screen bg-background flex flex-col">
+            <OnboardingTour />
+            <TopNav />
+            <main className={cn("flex-1 w-full px-4 md:px-6 py-6", className)}>
                 {children}
             </main>
         </div>

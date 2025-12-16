@@ -8,8 +8,7 @@ import * as z from "zod"
 import { login } from "@/app/actions/auth"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Typography } from "@/components/ui/typography"
+import { VadeaLogo } from "@/components/ui/logo"
 import { AlertCircle } from "lucide-react"
 
 const loginSchema = z.object({
@@ -48,29 +47,58 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="min-h-screen bg-notion-bg flex items-center justify-center p-4">
-            <div className="w-full max-w-md space-y-4">
-                {/* Logo */}
-                <div className="text-center space-y-2">
-                    <div className="inline-flex h-12 w-12 rounded-lg bg-gradient-to-br from-slate-900 to-slate-700 items-center justify-center text-white font-bold text-xl mx-auto">
-                        V
-                    </div>
-                    <Typography variant="h2">Welcome back</Typography>
-                    <Typography variant="muted">Sign in to your Vadae account</Typography>
+        <div className="min-h-screen bg-background grid lg:grid-cols-2">
+            {/* Left Side - Illustration/Branding */}
+            <div className="hidden lg:flex flex-col justify-center items-center bg-primary p-12 relative overflow-hidden">
+                {/* Decorative background elements */}
+                <div className="absolute inset-0 opacity-10">
+                    <div className="absolute top-20 left-20 w-64 h-64 rounded-full bg-white"></div>
+                    <div className="absolute bottom-20 right-20 w-96 h-96 rounded-full bg-white"></div>
                 </div>
 
-                {/* Login Card */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Sign In</CardTitle>
-                        <CardDescription>
-                            Enter your email and password to continue
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
+                {/* Content */}
+                <div className="relative z-10 text-center text-primary-foreground max-w-md">
+                    <VadeaLogo className="h-16 w-16 mx-auto mb-8 fill-white" />
+                    <h1 className="text-4xl font-bold mb-6">Welcome back to Vadea</h1>
+                    <p className="text-xl opacity-90">
+                        Your academic life, organized. Continue where you left off and stay on top of your semester.
+                    </p>
+
+                    {/* Features */}
+                    <div className="mt-12 grid grid-cols-3 gap-4">
+                        <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                            <p className="text-sm font-medium">Organize</p>
+                        </div>
+                        <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                            <p className="text-sm font-medium">Focus</p>
+                        </div>
+                        <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                            <p className="text-sm font-medium">Succeed</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Right Side - Login Form */}
+            <div className="flex items-center justify-center p-8">
+                <div className="w-full max-w-md">
+                    {/* Logo for mobile */}
+                    <div className="lg:hidden flex items-center justify-center gap-3 mb-8">
+                        <VadeaLogo className="h-10 w-10" />
+                        <span className="text-2xl font-bold">Vadea</span>
+                    </div>
+
+                    <div className="space-y-6">
+                        <div>
+                            <h2 className="text-3xl font-bold text-foreground">Sign in</h2>
+                            <p className="text-muted-foreground mt-2">
+                                Enter your credentials to access your account
+                            </p>
+                        </div>
+
                         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                             {error && (
-                                <div className="flex items-center gap-2 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
+                                <div className="flex items-center gap-2 p-3 rounded-lg bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
                                     <AlertCircle className="h-4 w-4 flex-shrink-0" />
                                     <p>{error}</p>
                                 </div>
@@ -86,6 +114,7 @@ export default function LoginPage() {
                                     placeholder="you@university.edu"
                                     {...register("email")}
                                     disabled={isLoading}
+                                    className="h-11"
                                 />
                                 {errors.email && (
                                     <p className="text-sm text-red-600">{errors.email.message}</p>
@@ -102,36 +131,28 @@ export default function LoginPage() {
                                     placeholder="••••••••"
                                     {...register("password")}
                                     disabled={isLoading}
+                                    className="h-11"
                                 />
                                 {errors.password && (
                                     <p className="text-sm text-red-600">{errors.password.message}</p>
                                 )}
                             </div>
 
-                            <Button type="submit" className="w-full" disabled={isLoading}>
+                            <Button type="submit" className="w-full h-11" disabled={isLoading}>
                                 {isLoading ? "Signing in..." : "Sign In"}
                             </Button>
                         </form>
 
-                        <div className="mt-4 text-center text-sm">
-                            <Typography variant="muted">
+                        <div className="text-center text-sm">
+                            <p className="text-muted-foreground">
                                 Don't have an account?{" "}
-                                <Link href="/signup" className="text-slate-900 font-medium hover:underline">
+                                <Link href="/signup" className="text-primary font-medium hover:underline">
                                     Sign up
                                 </Link>
-                            </Typography>
+                            </p>
                         </div>
-                    </CardContent>
-                </Card>
-
-                {/* Demo credentials */}
-                <Card className="bg-slate-50 border-slate-200">
-                    <CardContent className="pt-6">
-                        <Typography variant="small" className="text-slate-600 text-center">
-                            Demo: demo@vadae.com / password123
-                        </Typography>
-                    </CardContent>
-                </Card>
+                    </div>
+                </div>
             </div>
         </div>
     )

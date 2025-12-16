@@ -4,6 +4,7 @@ import Link from "next/link"
 import { CheckCircle2, Circle, Clock, ArrowRight } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
+import { IllustrationEmpty } from "@/components/ui/illustrations"
 
 interface AssignmentsCardProps {
     tasks: any[]
@@ -11,7 +12,7 @@ interface AssignmentsCardProps {
 
 export function AssignmentsCard({ tasks }: AssignmentsCardProps) {
     return (
-        <Card className="h-full border-border shadow-sm group hover:shadow-md transition-all duration-200">
+        <Card className="h-full border-border shadow-none hover:border-foreground/20 transition-colors duration-200">
             <CardHeader className="pb-3 flex flex-row items-center justify-between space-y-0">
                 <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
                     <CheckCircle2 className="h-5 w-5 text-primary" />
@@ -23,12 +24,12 @@ export function AssignmentsCard({ tasks }: AssignmentsCardProps) {
             </CardHeader>
             <CardContent>
                 {tasks.length === 0 ? (
-                    <div className="text-center py-8 flex flex-col items-center justify-center space-y-2">
-                        <div className="h-12 w-12 bg-green-50 dark:bg-green-950/30 rounded-full flex items-center justify-center">
-                            <CheckCircle2 className="h-6 w-6 text-green-500 dark:text-green-400" />
+                    <div className="text-center py-6 flex flex-col items-center justify-center space-y-3">
+                        <IllustrationEmpty className="h-24 w-24 opacity-80" />
+                        <div>
+                            <p className="text-muted-foreground text-sm font-medium">All caught up!</p>
+                            <p className="text-muted-foreground text-xs text-center px-4 mt-1">No pending assignments. Enjoy.</p>
                         </div>
-                        <p className="text-muted-foreground text-sm font-medium">All caught up!</p>
-                        <p className="text-muted-foreground text-xs text-center px-4">No pending assignments. Enjoy your free time.</p>
                     </div>
                 ) : (
                     <div className="space-y-3">

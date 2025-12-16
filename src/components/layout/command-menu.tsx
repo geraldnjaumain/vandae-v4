@@ -141,7 +141,7 @@ export function CommandMenu() {
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogContent className="p-0 overflow-hidden shadow-2xl sm:max-w-xl gap-0">
+            <DialogContent className="p-0 overflow-hidden shadow-2xl sm:max-w-xl gap-0 [&_[data-close-icon]]:hidden">
                 <DialogHeader className="sr-only">
                     <DialogTitle>Command Menu</DialogTitle>
                 </DialogHeader>

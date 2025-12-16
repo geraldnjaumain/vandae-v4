@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { LoadingScreen } from "@/components/dashboard/loading-screen"
 import { ScheduleCard } from "@/components/dashboard/schedule-card"
 import { AssignmentsCard } from "@/components/dashboard/assignments-card"
 import { ResourcesCard } from "@/components/dashboard/resources-card"
@@ -65,31 +64,18 @@ export function DashboardClient({ userName }: DashboardClientProps) {
         loadData()
     }, [])
 
-    const handleLoadingComplete = () => {
-        setShowLoading(false)
-    }
+    // Loading handler removed
 
     return (
         <>
-            <AnimatePresence mode="wait">
-                {(showLoading || isLoading) && (
-                    <motion.div
-                        key="loading"
-                        initial={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                    >
-                        <LoadingScreen onComplete={handleLoadingComplete} />
-                    </motion.div>
-                )}
-            </AnimatePresence>
+            {/* Loading removed as per user request */}
 
-            {!showLoading && !isLoading && data && (
+            {!isLoading && data && (
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.3 }}
-                    className="container mx-auto p-6 max-w-[1600px] space-y-6"
+                    className="container mx-auto p-4 md:p-6 max-w-[1600px] space-y-6"
                 >
                     {/* Welcome Header */}
                     <div className="mb-8">

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { GoogleGenerativeAI } from '@google/generative-ai'
+import { withCache, generateCacheKey } from '@/lib/ai-cache'
 
 export async function POST(request: NextRequest) {
     try {
@@ -21,10 +22,10 @@ export async function POST(request: NextRequest) {
         }
 
         const genAI = new GoogleGenerativeAI(apiKey)
-        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
 
-        // Fetch User Context
+        // Fetch User Context INCLUDING COURSES
         let userContextString = ""
+        let currentCourse: any = null
         try {
             const { createClient } = await import('@/lib/supabase-server')
             const supabase = await createClient()
@@ -38,81 +39,151 @@ export async function POST(request: NextRequest) {
                     .eq('id', user.id)
                     .single()
 
-                // Fetch Recent Tasks (to infer courses/topics)
+                // Fetch Courses with full analysis
+                const { data: courses } = await supabase
+                    .from('courses')
+                    .select('*')
+                    .eq('user_id', user.id)
+                    .order('updated_at', { ascending: false })
+
+                // Fetch Recent Tasks (to infer current work)
                 const { data: tasks } = await supabase
                     .from('tasks')
                     .select('title, category, description, due_date')
                     .eq('user_id', user.id)
-                    .eq('status', 'in_progress') // Focus on active work
+                    .eq('status', 'in_progress')
                     .limit(10)
 
+                // Build comprehensive course context
+                let coursesContext = ""
+                if (courses && courses.length > 0) {
+                    currentCourse = courses[0] // Most recently updated course
+
+                    coursesContext = courses.map((course: any) => {
+                        let courseInfo = `\n📚 ${course.course_code}: ${course.course_name}
+   Instructor: ${course.instructor || 'N/A'}
+   Semester: ${course.semester || 'Current'}`
+
+                        if (course.is_analyzed && course.units) {
+                            const units = Array.isArray(course.units) ? course.units : []
+                            courseInfo += `\n   Units: ${units.map((u: any) => u.title).join(', ')}`
+                        }
+
+                        if (course.study_suggestions) {
+                            courseInfo += `\n   Study Approach: ${course.study_suggestions.slice(0, 100)}...`
+                        }
+
+                        return courseInfo
+                    }).join('\n')
+                }
+
                 userContextString = `
-STUDENT CONTEXT:
+STUDENT PROFILE:
 ${profile ? `- Major: ${profile.major || 'Undeclared'}
 - University: ${profile.university || 'Unknown'}
-- Interests: ${Array.isArray(profile.interests) ? profile.interests.join(', ') : profile.interests || 'None'}` : ''}
+- Interests: ${Array.isArray(profile.interests) ? profile.interests.join(', ') : profile.interests || 'None'}` : 'No profile data'}
 
-CURRENT ASSIGNMENTS/COURSES:
-${tasks?.length ? tasks.map((t: any) => `- ${t.title} (Category: ${t.category || 'General'}) [Due: ${t.due_date || 'No date'}]`).join('\n') : 'No active assignments found.'}
+ENROLLED COURSES:${coursesContext || '\nNo courses enrolled yet.'}
+
+CURRENT ASSIGNMENTS/TASKS:
+${tasks?.length ? tasks.map((t: any) => `- ${t.title} (${t.category || 'General'}) [Due: ${t.due_date || 'No date'}]`).join('\n') : 'No active assignments.'}
 `
             }
         } catch (err) {
             console.error("Failed to fetch user context:", err)
-            // Continue without context if fetch fails
         }
 
-        // Build conversation history
-        const conversationHistory = messages.map((msg: any) => ({
-            role: msg.role === 'user' ? 'user' : 'model',
-            parts: [{ text: msg.content }]
-        }))
-
-        // System context
-        const systemContext = `You are Vadea AI, an intelligent academic assistant helping ${userName}. 
-You specialize in:
-- Study planning and time management
-- Academic writing and research
-- Course material explanation
-- Exam preparation strategies
-- Note-taking techniques
-- Stress management for students
+        // Enhanced system context with FULL COURSE KNOWLEDGE
+        const systemContext = `You are Vadea AI, an intelligent academic assistant specialized in helping ${userName} succeed in their courses.
 
 ${userContextString}
 
-CRITICAL INSTRUCTION:
-The student wants you to specifically help with their COURSES. 
-If they ask about a topic, cross-reference their "Current Assignments" and "Major" to provide highly relevant, specific resources.
-- If they are working on a specific assignment, suggest relevant academic papers, crash course videos, or key concepts they should research.
-- RESEARCH: When asked to research a unit or topic, provide a structured breakdown of key concepts and list 3-5 specific, high-quality resources (books, websites, tools) that would help them.
-- Be proactive: if they mention a vague topic, connect it to their major or known assignments if possible.
+${currentCourse && currentCourse.is_analyzed ? `
+🎯 CURRENT FOCUS COURSE: ${currentCourse.course_code} - ${currentCourse.course_name}
 
-Provide helpful, concise, and actionable advice. Use markdown formatting for better readability.
-Be encouraging and supportive while maintaining professionalism.`
+COMPREHENSIVE COURSE KNOWLEDGE:
+${currentCourse.ai_analysis ? JSON.parse(currentCourse.ai_analysis).overview : ''}
 
-        // Create chat with history
-        const chat = model.startChat({
-            history: [
-                {
-                    role: 'user',
-                    parts: [{ text: systemContext }]
-                },
-                {
-                    role: 'model',
-                    parts: [{ text: `Hello ${userName}! I'm Vadea AI, your personal academic assistant. I'm here to help you succeed in your studies. How can I assist you today?` }]
-                },
-                ...conversationHistory.slice(0, -1) // Exclude last message (it will be sent separately)
-            ]
+Course Units:
+${currentCourse.units ? JSON.stringify(currentCourse.units, null, 2) : 'Not yet analyzed'}
+
+Recommended Resources:
+${currentCourse.resources ? JSON.stringify(currentCourse.resources, null, 2) : 'Not yet analyzed'}
+
+Study Methodology: ${currentCourse.study_suggestions || 'Not yet analyzed'}
+
+You have DEEP KNOWLEDGE of this course and can:
+- Explain ANY concept from any unit in detail
+- Recommend specific resources from the course material
+- Create study plans for each unit
+- Provide practice problems and examples relevant to the course
+- Connect concepts across different units
+- Offer exam preparation strategies specific to this course type
+` : ''}
+
+CORE CAPABILITIES:
+- Study planning and time management
+- Course material explanation with DEEP SUBJECT KNOWLEDGE
+- Academic writing and research guidance
+- Exam preparation strategies (CUSTOMIZED to course type)
+- Note-taking techniques
+- Stress management for students
+
+INSTRUCTIONS:
+1. When answering questions, ALWAYS reference specific course units, topics, or resources when relevant
+2. If the student asks about a topic covered in their enrolled courses, provide IN-DEPTH explanations
+3. Suggest SPECIFIC resources from the course resource list when applicable
+4. Create ACTIONABLE study plans with concrete steps
+5. Be encouraging, supportive, and professional
+
+Use markdown formatting for better readability. Be concise but comprehensive.`
+
+        // Generate cache key from messages (only user messages to avoid cache misses)
+        const userMessages = messages.filter((m: any) => m.role === 'user')
+        const cacheKey = generateCacheKey({
+            messages: userMessages,
+            userName
         })
 
-        // Send the latest user message
-        const lastMessage = messages[messages.length - 1]
-        const result = await chat.sendMessage(lastMessage.content)
-        const response = await result.response
-        const text = response.text()
+        // Try cache first, then generate if not found
+        const cachedResult = await withCache(
+            {
+                endpoint: 'ai-chat',
+                ttlDays: 7 // Cache AI chat responses for 7 days
+            },
+            { messages: userMessages, userName },
+            async () => {
+                // Initialize model with system instruction
+                const model = genAI.getGenerativeModel({
+                    model: 'models/gemini-2.5-flash',
+                    systemInstruction: systemContext
+                })
+
+                // Format history for Gemini
+                const conversationHistory = messages.slice(0, -1).map((msg: any) => ({
+                    role: msg.role === 'user' ? 'user' : 'model',
+                    parts: [{ text: msg.content }]
+                }))
+
+                // Create chat with clean history
+                const chat = model.startChat({
+                    history: conversationHistory
+                })
+
+                // Send the latest user message
+                const lastMessage = messages[messages.length - 1]
+                const result = await chat.sendMessage(lastMessage.content)
+                const response = await result.response
+                const text = response.text()
+
+                return text
+            }
+        )
 
         return NextResponse.json({
-            response: text,
-            timestamp: new Date().toISOString()
+            response: cachedResult.data,
+            timestamp: new Date().toISOString(),
+            fromCache: cachedResult.fromCache
         })
 
     } catch (error: any) {
@@ -139,5 +210,3 @@ Be encouraging and supportive while maintaining professionalism.`
         )
     }
 }
-
-

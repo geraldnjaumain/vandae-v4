@@ -55,7 +55,7 @@ export async function parseSyllabusPDF(formData: FormData): Promise<ExtractedEve
             throw new Error("AI Service is not configured. Please contact support.")
         }
 
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" })
+        const model = genAI.getGenerativeModel({ model: "models/gemini-2.5-flash" })
         const year = new Date().getFullYear()
 
         // Prompt Engineering

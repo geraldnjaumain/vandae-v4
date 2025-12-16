@@ -33,6 +33,8 @@ function getFileIcon(type: string) {
     return <File className="h-6 w-6 text-slate-500" />
 }
 
+import { ResourceViewer } from "@/components/resources/resource-viewer"
+
 export function FileGrid({ resources }: { resources: Resource[] }) {
     if (resources.length === 0) {
         return (
@@ -53,6 +55,7 @@ export function FileGrid({ resources }: { resources: Resource[] }) {
 
 function FileCard({ file }: { file: Resource }) {
     const [isLoading, setIsLoading] = useState(false)
+    const [viewResource, setViewResource] = useState<Resource | null>(null)
     const supabase = createClient()
     const { toggleFile, isAttached } = useAIStore()
     const attached = isAttached(file.id)
@@ -98,63 +101,79 @@ function FileCard({ file }: { file: Resource }) {
     }
 
     return (
-        <div className={cn(
-            "group relative bg-white border rounded-lg p-4 hover:shadow-md transition-all flex items-start justify-between",
-            attached ? "ring-2 ring-primary border-transparent shadow-sm bg-primary/5" : "border-slate-200"
-        )}>
-            <div className="flex items-start gap-4">
-                <div className="p-2 bg-slate-50 rounded-lg shrink-0">
-                    {getFileIcon(file.file_type)}
-                </div>
-                <div className="min-w-0">
-                    <h3 className="font-medium text-sm truncate max-w-[120px] sm:max-w-[160px]" title={file.title}>
-                        {file.title}
-                    </h3>
-                    <div className="flex items-center gap-2 mt-1">
-                        <span className="text-xs text-slate-500">
-                            {formatBytes(file.file_size)}
-                        </span>
-                        {attached && (
-                            <span className="flex items-center gap-1 text-[10px] bg-primary/20 text-primary px-1.5 py-0.5 rounded-full font-medium">
-                                <Brain className="h-3 w-3" />
-                                Context
-                            </span>
-                        )}
+        <>
+            <div className={cn(
+                "group relative bg-white border rounded-lg p-4 hover:shadow-md transition-all flex items-start justify-between cursor-pointer",
+                attached ? "ring-2 ring-primary border-transparent shadow-sm bg-primary/5" : "border-slate-200"
+            )}
+            onClick={() => setViewResource(file)}
+            >
+                <div className="flex items-start gap-4">
+                    <div className="p-2 bg-slate-50 rounded-lg shrink-0">
+                        {getFileIcon(file.file_type)}
                     </div>
+                    <div className="min-w-0">
+                        <h3 className="font-medium text-sm truncate max-w-[120px] sm:max-w-[160px]" title={file.title}>
+                            {file.title}
+                        </h3>
+                        <div className="flex items-center gap-2 mt-1">
+                            <span className="text-xs text-slate-500">
+                                {formatBytes(file.file_size)}
+                            </span>
+                            {attached && (
+                                <span className="flex items-center gap-1 text-[10px] bg-primary/20 text-primary px-1.5 py-0.5 rounded-full font-medium">
+                                    <Brain className="h-3 w-3" />
+                                    Context
+                                </span>
+                            )}
+                        </div>
+                    </div>
+                </div>
+
+                <div onClick={(e) => e.stopPropagation()}>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 -mt-1 -mr-1">
+                                <MoreVertical className="h-4 w-4 text-slate-400" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => setViewResource(file)}>
+                                <File className="mr-2 h-4 w-4" />
+                                View
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={handleDownload} disabled={isLoading}>
+                                <Download className="mr-2 h-4 w-4" />
+                                Download
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={handleToggleAI}>
+                                {attached ? (
+                                    <>
+                                        <Check className="mr-2 h-4 w-4 text-primary" />
+                                        Attached
+                                    </>
+                                ) : (
+                                    <>
+                                        <Brain className="mr-2 h-4 w-4 text-primary" />
+                                        Attach to AI
+                                    </>
+                                )}
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={handleDelete} className="text-red-600 focus:text-red-600">
+                                <Trash className="mr-2 h-4 w-4" />
+                                Delete
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </div>
             </div>
 
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 -mt-1 -mr-1">
-                        <MoreVertical className="h-4 w-4 text-slate-400" />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={handleDownload} disabled={isLoading}>
-                        <Download className="mr-2 h-4 w-4" />
-                        Download
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleToggleAI}>
-                        {attached ? (
-                            <>
-                                <Check className="mr-2 h-4 w-4 text-primary" />
-                                Attached
-                            </>
-                        ) : (
-                            <>
-                                <Brain className="mr-2 h-4 w-4 text-primary" />
-                                Attach to AI
-                            </>
-                        )}
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={handleDelete} className="text-red-600 focus:text-red-600">
-                        <Trash className="mr-2 h-4 w-4" />
-                        Delete
-                    </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
-        </div>
+            <ResourceViewer 
+                resource={viewResource} 
+                isOpen={!!viewResource} 
+                onClose={() => setViewResource(null)} 
+            />
+        </>
     )
 }

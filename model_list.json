@@ -1,0 +1,252 @@
+﻿[
+    {
+        "name":  "models/embedding-gecko-001",
+        "displayName":  "Embedding Gecko",
+        "description":  "Obtain a distributed representation of a text."
+    },
+    {
+        "name":  "models/gemini-2.5-flash",
+        "displayName":  "Gemini 2.5 Flash",
+        "description":  "Stable version of Gemini 2.5 Flash, our mid-size multimodal model that supports up to 1 million tokens, released in June of 2025."
+    },
+    {
+        "name":  "models/gemini-2.5-pro",
+        "displayName":  "Gemini 2.5 Pro",
+        "description":  "Stable release (June 17th, 2025) of Gemini 2.5 Pro"
+    },
+    {
+        "name":  "models/gemini-2.0-flash-exp",
+        "displayName":  "Gemini 2.0 Flash Experimental",
+        "description":  "Gemini 2.0 Flash Experimental"
+    },
+    {
+        "name":  "models/gemini-2.0-flash",
+        "displayName":  "Gemini 2.0 Flash",
+        "description":  "Gemini 2.0 Flash"
+    },
+    {
+        "name":  "models/gemini-2.0-flash-001",
+        "displayName":  "Gemini 2.0 Flash 001",
+        "description":  "Stable version of Gemini 2.0 Flash, our fast and versatile multimodal model for scaling across diverse tasks, released in January of 2025."
+    },
+    {
+        "name":  "models/gemini-2.0-flash-exp-image-generation",
+        "displayName":  "Gemini 2.0 Flash (Image Generation) Experimental",
+        "description":  "Gemini 2.0 Flash (Image Generation) Experimental"
+    },
+    {
+        "name":  "models/gemini-2.0-flash-lite-001",
+        "displayName":  "Gemini 2.0 Flash-Lite 001",
+        "description":  "Stable version of Gemini 2.0 Flash-Lite"
+    },
+    {
+        "name":  "models/gemini-2.0-flash-lite",
+        "displayName":  "Gemini 2.0 Flash-Lite",
+        "description":  "Gemini 2.0 Flash-Lite"
+    },
+    {
+        "name":  "models/gemini-2.0-flash-lite-preview-02-05",
+        "displayName":  "Gemini 2.0 Flash-Lite Preview 02-05",
+        "description":  "Preview release (February 5th, 2025) of Gemini 2.0 Flash-Lite"
+    },
+    {
+        "name":  "models/gemini-2.0-flash-lite-preview",
+        "displayName":  "Gemini 2.0 Flash-Lite Preview",
+        "description":  "Preview release (February 5th, 2025) of Gemini 2.0 Flash-Lite"
+    },
+    {
+        "name":  "models/gemini-exp-1206",
+        "displayName":  "Gemini Experimental 1206",
+        "description":  "Experimental release (March 25th, 2025) of Gemini 2.5 Pro"
+    },
+    {
+        "name":  "models/gemini-2.5-flash-preview-tts",
+        "displayName":  "Gemini 2.5 Flash Preview TTS",
+        "description":  "Gemini 2.5 Flash Preview TTS"
+    },
+    {
+        "name":  "models/gemini-2.5-pro-preview-tts",
+        "displayName":  "Gemini 2.5 Pro Preview TTS",
+        "description":  "Gemini 2.5 Pro Preview TTS"
+    },
+    {
+        "name":  "models/gemma-3-1b-it",
+        "displayName":  "Gemma 3 1B",
+        "description":  null
+    },
+    {
+        "name":  "models/gemma-3-4b-it",
+        "displayName":  "Gemma 3 4B",
+        "description":  null
+    },
+    {
+        "name":  "models/gemma-3-12b-it",
+        "displayName":  "Gemma 3 12B",
+        "description":  null
+    },
+    {
+        "name":  "models/gemma-3-27b-it",
+        "displayName":  "Gemma 3 27B",
+        "description":  null
+    },
+    {
+        "name":  "models/gemma-3n-e4b-it",
+        "displayName":  "Gemma 3n E4B",
+        "description":  null
+    },
+    {
+        "name":  "models/gemma-3n-e2b-it",
+        "displayName":  "Gemma 3n E2B",
+        "description":  null
+    },
+    {
+        "name":  "models/gemini-flash-latest",
+        "displayName":  "Gemini Flash Latest",
+        "description":  "Latest release of Gemini Flash"
+    },
+    {
+        "name":  "models/gemini-flash-lite-latest",
+        "displayName":  "Gemini Flash-Lite Latest",
+        "description":  "Latest release of Gemini Flash-Lite"
+    },
+    {
+        "name":  "models/gemini-pro-latest",
+        "displayName":  "Gemini Pro Latest",
+        "description":  "Latest release of Gemini Pro"
+    },
+    {
+        "name":  "models/gemini-2.5-flash-lite",
+        "displayName":  "Gemini 2.5 Flash-Lite",
+        "description":  "Stable version of Gemini 2.5 Flash-Lite, released in July of 2025"
+    },
+    {
+        "name":  "models/gemini-2.5-flash-image-preview",
+        "displayName":  "Nano Banana",
+        "description":  "Gemini 2.5 Flash Preview Image"
+    },
+    {
+        "name":  "models/gemini-2.5-flash-image",
+        "displayName":  "Nano Banana",
+        "description":  "Gemini 2.5 Flash Preview Image"
+    },
+    {
+        "name":  "models/gemini-2.5-flash-preview-09-2025",
+        "displayName":  "Gemini 2.5 Flash Preview Sep 2025",
+        "description":  "Gemini 2.5 Flash Preview Sep 2025"
+    },
+    {
+        "name":  "models/gemini-2.5-flash-lite-preview-09-2025",
+        "displayName":  "Gemini 2.5 Flash-Lite Preview Sep 2025",
+        "description":  "Preview release (Septempber 25th, 2025) of Gemini 2.5 Flash-Lite"
+    },
+    {
+        "name":  "models/gemini-3-pro-preview",
+        "displayName":  "Gemini 3 Pro Preview",
+        "description":  "Gemini 3 Pro Preview"
+    },
+    {
+        "name":  "models/gemini-3-pro-image-preview",
+        "displayName":  "Nano Banana Pro",
+        "description":  "Gemini 3 Pro Image Preview"
+    },
+    {
+        "name":  "models/nano-banana-pro-preview",
+        "displayName":  "Nano Banana Pro",
+        "description":  "Gemini 3 Pro Image Preview"
+    },
+    {
+        "name":  "models/gemini-robotics-er-1.5-preview",
+        "displayName":  "Gemini Robotics-ER 1.5 Preview",
+        "description":  "Gemini Robotics-ER 1.5 Preview"
+    },
+    {
+        "name":  "models/gemini-2.5-computer-use-preview-10-2025",
+        "displayName":  "Gemini 2.5 Computer Use Preview 10-2025",
+        "description":  "Gemini 2.5 Computer Use Preview 10-2025"
+    },
+    {
+        "name":  "models/deep-research-pro-preview-12-2025",
+        "displayName":  "Deep Research Pro Preview (Dec-12-2025)",
+        "description":  "Preview release (December 12th, 2025) of Deep Research Pro"
+    },
+    {
+        "name":  "models/embedding-001",
+        "displayName":  "Embedding 001",
+        "description":  "Obtain a distributed representation of a text."
+    },
+    {
+        "name":  "models/text-embedding-004",
+        "displayName":  "Text Embedding 004",
+        "description":  "Obtain a distributed representation of a text."
+    },
+    {
+        "name":  "models/gemini-embedding-exp-03-07",
+        "displayName":  "Gemini Embedding Experimental 03-07",
+        "description":  "Obtain a distributed representation of a text."
+    },
+    {
+        "name":  "models/gemini-embedding-exp",
+        "displayName":  "Gemini Embedding Experimental",
+        "description":  "Obtain a distributed representation of a text."
+    },
+    {
+        "name":  "models/gemini-embedding-001",
+        "displayName":  "Gemini Embedding 001",
+        "description":  "Obtain a distributed representation of a text."
+    },
+    {
+        "name":  "models/aqa",
+        "displayName":  "Model that performs Attributed Question Answering.",
+        "description":  "Model trained to return answers to questions that are grounded in provided sources, along with estimating answerable probability."
+    },
+    {
+        "name":  "models/imagen-4.0-generate-preview-06-06",
+        "displayName":  "Imagen 4 (Preview)",
+        "description":  "Vertex served Imagen 4.0 model"
+    },
+    {
+        "name":  "models/imagen-4.0-ultra-generate-preview-06-06",
+        "displayName":  "Imagen 4 Ultra (Preview)",
+        "description":  "Vertex served Imagen 4.0 ultra model"
+    },
+    {
+        "name":  "models/imagen-4.0-generate-001",
+        "displayName":  "Imagen 4",
+        "description":  "Vertex served Imagen 4.0 model"
+    },
+    {
+        "name":  "models/imagen-4.0-ultra-generate-001",
+        "displayName":  "Imagen 4 Ultra",
+        "description":  "Vertex served Imagen 4.0 ultra model"
+    },
+    {
+        "name":  "models/imagen-4.0-fast-generate-001",
+        "displayName":  "Imagen 4 Fast",
+        "description":  "Vertex served Imagen 4.0 Fast model"
+    },
+    {
+        "name":  "models/veo-2.0-generate-001",
+        "displayName":  "Veo 2",
+        "description":  "Vertex served Veo 2 model. Access to this model requires billing to be enabled on the associated Google Cloud Platform account. Please visit https://console.cloud.google.com/billing to enable it."
+    },
+    {
+        "name":  "models/veo-3.0-generate-001",
+        "displayName":  "Veo 3",
+        "description":  "Veo 3"
+    },
+    {
+        "name":  "models/veo-3.0-fast-generate-001",
+        "displayName":  "Veo 3 fast",
+        "description":  "Veo 3 fast"
+    },
+    {
+        "name":  "models/veo-3.1-generate-preview",
+        "displayName":  "Veo 3.1",
+        "description":  "Veo 3.1"
+    },
+    {
+        "name":  "models/veo-3.1-fast-generate-preview",
+        "displayName":  "Veo 3.1 fast",
+        "description":  "Veo 3.1 fast"
+    }
+]

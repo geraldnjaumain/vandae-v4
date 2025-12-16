@@ -15,6 +15,8 @@ interface ScheduleCardProps {
   schedule: Timetable[]
 }
 
+import { EventDialog } from "@/components/timetable/add-event-dialog"
+
 export function ScheduleCard({ schedule }: ScheduleCardProps) {
   if (schedule.length === 0) {
     return (
@@ -38,10 +40,12 @@ export function ScheduleCard({ schedule }: ScheduleCardProps) {
               Add your class schedule to never miss a lecture
             </Typography>
           </div>
-          <Button variant="outline" size="sm">
-            <Plus className="h-4 w-4 mr-2" />
-            Add Class
-          </Button>
+          <EventDialog>
+            <Button variant="outline" size="sm">
+              <Plus className="h-4 w-4 mr-2" />
+              Add Class
+            </Button>
+          </EventDialog>
         </CardContent>
       </Card>
     )
@@ -65,26 +69,31 @@ export function ScheduleCard({ schedule }: ScheduleCardProps) {
           return (
             <div
               key={item.id}
-              className="p-4 rounded-lg border border-border hover:bg-accent/50 transition-all duration-200 space-y-2"
-              style={{ borderLeftWidth: '4px', borderLeftColor: item.color || '#3b82f6' }}
+              className="p-4 rounded-lg border border-border/50 hover:bg-muted/50 transition-all duration-200 space-y-2 group"
             >
               <div className="flex items-start justify-between gap-2">
-                <Typography variant="small" className="font-semibold">
-                  {item.title}
-                </Typography>
-                <Badge variant="outline" className="text-xs whitespace-nowrap">
+                <div className="flex items-center gap-2">
+                  <div
+                    className="h-2 w-2 rounded-full shrink-0"
+                    style={{ backgroundColor: item.color || '#3b82f6' }}
+                  />
+                  <Typography variant="small" className="font-semibold">
+                    {item.title}
+                  </Typography>
+                </div>
+                <Badge variant="secondary" className="text-xs whitespace-nowrap opacity-70 group-hover:opacity-100 transition-opacity">
                   {timeUntil}
                 </Badge>
               </div>
 
-              <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                <span className="flex items-center gap-1">
-                  <Clock className="h-3 w-3" />
+              <div className="flex items-center gap-4 text-xs text-muted-foreground pl-4">
+                <span className="flex items-center gap-1.5">
+                  <Clock className="h-3.5 w-3.5" />
                   {format(startTime, 'h:mm a')} - {format(endTime, 'h:mm a')}
                 </span>
                 {item.location && (
-                  <span className="flex items-center gap-1">
-                    <MapPin className="h-3 w-3" />
+                  <span className="flex items-center gap-1.5">
+                    <MapPin className="h-3.5 w-3.5" />
                     {item.location}
                   </span>
                 )}

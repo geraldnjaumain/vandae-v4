@@ -68,7 +68,7 @@ export function CommunityCard({ post }: CommunityCardProps) {
 
     return (
         <Link href={`/community/${post.communities?.id}?channel=general`} className="block h-full group">
-            <Card className="h-full flex flex-col group-hover:border-indigo-200 transition-colors">
+            <Card className="h-full flex flex-col hover:border-foreground/20 transition-colors">
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <Users className="h-5 w-5 text-indigo-500" />

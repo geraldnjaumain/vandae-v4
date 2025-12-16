@@ -24,7 +24,7 @@ export async function createOrGetDirectMessageChannel(targetUserId: string) {
             .select('dm_channel_id')
             .eq('user_id', targetUserId)
             .in('dm_channel_id', myChannelIds)
-            .single()
+            .maybeSingle()
 
         if (existingChannel) {
             return { id: existingChannel.dm_channel_id }

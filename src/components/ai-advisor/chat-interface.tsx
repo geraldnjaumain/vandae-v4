@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
-import { Send, User, Loader2, Brain, X, FileText, Paperclip, BookOpen } from "lucide-react"
+import { Send, User, Loader2, GraduationCap, X, FileText, Paperclip, BookOpen } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
@@ -86,7 +86,7 @@ export function ChatInterface({ className, userName = "Student" }: ChatInterface
             setMessages(prev => [...prev, assistantMessage])
         } catch (error: any) {
             console.error('Chat error:', error)
-            toast.error('Failed to get AI response. Please try again.')
+            toast.error(error.message || 'Failed to get AI response')
 
             // Add error message
             setMessages(prev => [...prev, {
@@ -112,8 +112,8 @@ export function ChatInterface({ className, userName = "Student" }: ChatInterface
             <ScrollArea className="flex-1 px-4 md:px-6 py-6">
                 {messages.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-full py-12">
-                        <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center mb-6 shadow-lg">
-                            <Brain className="h-10 w-10 text-white" />
+                        <div className="h-20 w-20 rounded-2xl bg-primary flex items-center justify-center mb-6">
+                            <GraduationCap className="h-10 w-10 text-primary-foreground" />
                         </div>
                         <h2 className="text-2xl font-bold text-foreground mb-2">
                             Welcome back, {userName}!
@@ -127,12 +127,12 @@ export function ChatInterface({ className, userName = "Student" }: ChatInterface
                             {starterPrompts.map((prompt, idx) => (
                                 <Card
                                     key={idx}
-                                    className="p-4 cursor-pointer hover:bg-accent transition-all duration-200 hover:shadow-md group"
+                                    className="p-4 cursor-pointer hover:bg-accent/10 transition-all duration-200 border-2 hover:border-primary group"
                                     onClick={() => handleSend(prompt)}
                                 >
                                     <div className="flex items-start gap-3">
-                                        <Brain className="h-5 w-5 text-indigo-600 dark:text-indigo-400 shrink-0 mt-0.5" />
-                                        <p className="text-sm text-foreground group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                                        <GraduationCap className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                                        <p className="text-sm text-foreground group-hover:text-primary transition-colors">
                                             {prompt}
                                         </p>
                                     </div>
@@ -151,8 +151,8 @@ export function ChatInterface({ className, userName = "Student" }: ChatInterface
                                 )}
                             >
                                 {message.role === 'assistant' && (
-                                    <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shrink-0">
-                                        <Brain className="h-4 w-4 text-white" />
+                                    <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center shrink-0">
+                                        <GraduationCap className="h-4 w-4 text-primary-foreground" />
                                     </div>
                                 )}
 
@@ -160,7 +160,7 @@ export function ChatInterface({ className, userName = "Student" }: ChatInterface
                                     className={cn(
                                         "rounded-2xl px-4 py-3 max-w-[80%]",
                                         message.role === 'user'
-                                            ? "bg-indigo-600 text-white"
+                                            ? "bg-primary text-primary-foreground"
                                             : "bg-card border border-border"
                                     )}
                                 >
@@ -178,7 +178,7 @@ export function ChatInterface({ className, userName = "Student" }: ChatInterface
                                         <p className={cn(
                                             "text-xs mt-2",
                                             message.role === 'user'
-                                                ? "text-indigo-200"
+                                                ? "text-primary-foreground/70"
                                                 : "text-muted-foreground"
                                         )}>
                                             {message.timestamp.toLocaleTimeString([], {
@@ -199,12 +199,12 @@ export function ChatInterface({ className, userName = "Student" }: ChatInterface
 
                         {isLoading && (
                             <div className="flex gap-4">
-                                <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shrink-0">
-                                    <Brain className="h-4 w-4 text-white" />
+                                <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center shrink-0">
+                                    <GraduationCap className="h-4 w-4 text-primary-foreground" />
                                 </div>
                                 <div className="rounded-2xl px-4 py-3 bg-card border border-border">
                                     <div className="flex items-center gap-2">
-                                        <Loader2 className="h-4 w-4 animate-spin text-indigo-600 dark:text-indigo-400" />
+                                        <Loader2 className="h-4 w-4 animate-spin text-primary" />
                                         <span className="text-sm text-muted-foreground">Thinking...</span>
                                     </div>
                                 </div>

@@ -7,9 +7,14 @@ import { createClient } from "@/lib/supabase-browser"
 import { createResource } from "@/app/resources/actions"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
+// Import compression utility
+import { compressFile, formatFileSize } from "@/lib/file-compression"
 
 export function UploadDropzone({ userId }: { userId: string }) {
     const [isDragging, setIsDragging] = useState(false)
+    // Add compression state
+    const [isCompressing, setIsCompressing] = useState(false)
+    const [compressionProgress, setCompressionProgress] = useState(0)
     const [isUploading, setIsUploading] = useState(false)
     const fileInputRef = useRef<HTMLInputElement>(null)
     const supabase = createClient()
@@ -31,38 +36,51 @@ export function UploadDropzone({ userId }: { userId: string }) {
         if (files.length > 0) handleUpload(files[0])
     }
 
-    const handleUpload = async (file: File) => {
-        if (!file) return
+    const handleUpload = async (originalFile: File) => {
+        if (!originalFile) return
 
-        // 1. Validation (Max 10MB)
-        if (file.size > 10 * 1024 * 1024) {
-            toast.error("File is too large (Max 10MB)")
+        // 1. Validation (Max 50MB - increased to allow larger pre-compression files)
+        if (originalFile.size > 50 * 1024 * 1024) {
+            toast.error("File is too large (Max 50MB)")
             return
         }
 
-        setIsUploading(true)
-        const toastId = toast.loading("Uploading file...")
-
         try {
+            // COMPRESSION STEP
+            setIsCompressing(true)
+            toast.info("Optimizing file...", { duration: 2000 })
+
+            const { compressedFile, originalSize, compressedSize, compressionRatio } = await compressFile(originalFile)
+
+            setIsCompressing(false)
+
+            if (compressionRatio > 0) {
+                const reduction = formatFileSize(originalSize - compressedSize)
+                toast.success(`Compressed: ${formatFileSize(originalSize)} → ${formatFileSize(compressedSize)} (${reduction} saved)`)
+            }
+
+            const fileToUpload = compressedFile
+
+            setIsUploading(true)
+            const toastId = toast.loading("Uploading file...")
+
             // 2. Upload to Supabase Storage
-            const fileExt = file.name.split('.').pop()
+            const fileExt = fileToUpload.name.split('.').pop()
             const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
             const filePath = `${userId}/${fileName}`
 
             const { error: uploadError } = await supabase.storage
                 .from('vault')
-                .upload(filePath, file)
+                .upload(filePath, fileToUpload)
 
             if (uploadError) throw uploadError
 
             // 3. Save Metadata to DB via Server Action
-            // Construct public URL or internal path?
-            // Since it's a private bucket, we just store the path
             await createResource({
-                title: file.name,
+                title: originalFile.name, // Keep original name
                 file_url: filePath, // Storing path as 'url' for internal reference
                 file_type: fileExt || 'unknown',
-                file_size: file.size,
+                file_size: fileToUpload.size,
                 file_path: filePath
             })
 
@@ -70,9 +88,10 @@ export function UploadDropzone({ userId }: { userId: string }) {
 
         } catch (error: any) {
             console.error(error)
-            toast.error("Upload failed: " + error.message, { id: toastId })
+            toast.error("Upload failed: " + error.message)
         } finally {
             setIsUploading(false)
+            setIsCompressing(false)
             if (fileInputRef.current) fileInputRef.current.value = ''
         }
     }

@@ -2,7 +2,7 @@ import { AppLayout } from "@/components/layout"
 import { ChatInterface } from "@/components/ai-advisor/chat-interface"
 import { ResearchPanel } from "@/components/ai-advisor/research-panel"
 import { getUser, getUserProfile } from "@/lib/supabase-server"
-import { Brain } from "lucide-react"
+import { GraduationCap } from "lucide-react"
 
 export default async function AIAdvisorPage() {
     const user = await getUser()
@@ -17,15 +17,15 @@ export default async function AIAdvisorPage() {
                     {/* Header */}
                     <div className="border-b border-border bg-card px-6 py-4 flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                            <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-                                <Brain className="h-5 w-5 text-white" />
+                            <div className="h-10 w-10 rounded-lg bg-primary flex items-center justify-center">
+                                <GraduationCap className="h-5 w-5 text-primary-foreground" />
                             </div>
                             <div>
-                                <h1 className="text-xl font-bold text-foreground">Vadea AI Assistant</h1>
+                                <h1 className="text-xl font-bold text-foreground">Vadea AI Advisor</h1>
                                 <p className="text-xs text-muted-foreground">Your intelligent academic companion</p>
                             </div>
                         </div>
-                        <div className="px-3 py-1 rounded-full bg-indigo-100 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 text-xs font-medium">
+                        <div className="px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-medium">
                             Beta
                         </div>
                     </div>
