@@ -160,6 +160,12 @@ ALTER TABLE public.study_sessions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.grade_entries ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.user_goals ENABLE ROW LEVEL SECURITY;
 
+-- Drop existing policies if they exist
+DROP POLICY IF EXISTS "Users can view their own study sessions" ON public.study_sessions;
+DROP POLICY IF EXISTS "Users can insert their own study sessions" ON public.study_sessions;
+DROP POLICY IF EXISTS "Users can update their own study sessions" ON public.study_sessions;
+DROP POLICY IF EXISTS "Users can delete their own study sessions" ON public.study_sessions;
+
 -- Study sessions policies
 CREATE POLICY "Users can view their own study sessions"
   ON public.study_sessions FOR SELECT
@@ -177,6 +183,11 @@ CREATE POLICY "Users can delete their own study sessions"
   ON public.study_sessions FOR DELETE
   USING (auth.uid() = user_id);
 
+-- Drop existing grade policies
+DROP POLICY IF EXISTS "Users can view their own grades" ON public.grade_entries;
+DROP POLICY IF EXISTS "Users can insert grade entries" ON public.grade_entries;
+DROP POLICY IF EXISTS "Graders can update grade entries" ON public.grade_entries;
+
 -- Grade entries policies
 CREATE POLICY "Users can view their own grades"
   ON public.grade_entries FOR SELECT
@@ -189,6 +200,12 @@ CREATE POLICY "Users can insert grade entries"
 CREATE POLICY "Graders can update grade entries"
   ON public.grade_entries FOR UPDATE
   USING (auth.uid() = graded_by);
+
+-- Drop existing goals policies
+DROP POLICY IF EXISTS "Users can view their own goals" ON public.user_goals;
+DROP POLICY IF EXISTS "Users can insert their own goals" ON public.user_goals;
+DROP POLICY IF EXISTS "Users can update their own goals" ON public.user_goals;
+DROP POLICY IF EXISTS "Users can delete their own goals" ON public.user_goals;
 
 -- User goals policies
 CREATE POLICY "Users can view their own goals"
