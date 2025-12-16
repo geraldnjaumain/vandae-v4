@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { useState } from "react"
-import { Textarea } from "@/components/ui/texture"
+import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
