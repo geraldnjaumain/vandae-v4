@@ -4,7 +4,6 @@ import { getBlogPost, getAllBlogPosts } from '@/lib/blog'
 import { MDXRemote } from 'next-mdx-remote/rsc'
 import { Calendar, Clock, ArrowLeft, Tag } from 'lucide-react'
 import Link from 'next/link'
-import Image from 'next/image'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 
@@ -103,15 +102,11 @@ export default async function BlogPostPage(props: { params: Promise<{ slug: stri
                         ))}
                     </div>
 
-                    {/* Featured Image */}
-                    <div className="relative w-full h-64 md:h-96 rounded-lg overflow-hidden mb-8">
-                        <Image
-                            src={post.image}
-                            alt={post.title}
-                            fill
-                            className="object-cover"
-                            priority
-                        />
+                    {/* Featured Image / Gradient Background */}
+                    <div className="relative w-full h-64 md:h-96 rounded-lg overflow-hidden mb-8 bg-gradient-to-br from-primary/20 via-primary/10 to-background">
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="text-6xl font-bold text-primary/20">{post.category}</div>
+                        </div>
                     </div>
                 </header>
 
